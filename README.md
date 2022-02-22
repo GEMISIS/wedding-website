@@ -6,7 +6,7 @@ This is the website used for registering guests for my wedding. Because of COVID
 ## Technical Design
 The project uses CDK to deploy via AWS, which hosts a very simple React website that users can interact with. An architecture diagram of the website can be seen below:
 
-![The architecture diagram for the project.](https://github.com/GEMISIS/wedding-website/blob/main/diagrams/architecture.png?raw=true)
+![The architecture diagram for the website.](https://github.com/GEMISIS/wedding-website/blob/main/diagrams/architecture.png?raw=true)
 
 The website primarily
 
