@@ -8,13 +8,19 @@ The project uses CDK to deploy via AWS, which hosts a very simple React website 
 
 ![The architecture diagram for the website.](https://github.com/GEMISIS/wedding-website/blob/main/diagrams/architecture.png?raw=true)
 
-The website primarily
+## Commands
 
-## Useful commands
+### lerna run build
+Builds everything required for the site. Will output a build folder for the website, and a bin folder for the cdk project.
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+### lerna run test
+Runs all of the tests for the projects. An interactive test can be run in the website package specifically.
+
+### lerna run synth
+Synthesizes the CDK project to be deployed.
+
+### lerna run deploy
+Deploys the previously synthesized CDK project. This effectively deploys the entire website.
+
+### lerna run start
+Runs the website to be tested locally, instead of requiring an entire deployment each time. Note however that this will only run the website files, and that any APIs will still need to be deployed at least once before testing locally will work.
