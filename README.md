@@ -8,6 +8,11 @@ The project uses CDK to deploy via AWS, which hosts a very simple React website 
 
 ![The architecture diagram for the website.](https://github.com/GEMISIS/wedding-website/blob/main/diagrams/architecture.png?raw=true)
 
+## Setup
+You will need to install the following before you can use this project:
+- AWS CDK (Cloud Development Kit)
+- Docker (For deploying several things via CDK)
+
 ## Commands
 
 ### lerna run build

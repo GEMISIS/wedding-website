@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { WeddingWebsiteStack } from './wedding-website-stack';
+import { WeddingWebsiteStack } from './stacks/wedding-website-stack';
 
 const app = new cdk.App();
 new WeddingWebsiteStack(app, 'WeddingWebsiteStack', {

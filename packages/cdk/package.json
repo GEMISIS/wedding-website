@@ -5,6 +5,9 @@
   "bin": {
     "wedding-website-cdk": "bin/app.js"
   },
+  "files": [
+    "/bin"
+  ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -22,6 +25,9 @@
     "ts-jest": "^26.2.0",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
+  },
+  "peerDependencies": {
+    "@types/aws-lambda": "^8.10.72"
   },
   "dependencies": {
     "aws-cdk-lib": "2.13.0",
