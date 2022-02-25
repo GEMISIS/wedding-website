@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 
 interface LoginPanelProps {
   onSuccess: (results: LoginPanelResults) => void;
@@ -12,6 +12,7 @@ export interface LoginPanelResults {
 }
 
 export function LoginPanel(props: LoginPanelProps) {
+  const [badLogin, setBadLogin] = useState(false);
   const [results, setResults] = useState<LoginPanelResults>({
     firstName: '',
     lastName: '',
@@ -29,7 +30,18 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      props.onSuccess(results);
+      fetch(`https://api.geraldandmegan.com/validate?firstName=${results.firstName}&lastName=${results.lastName}&addressNumber=${results.addressNumber}`)
+        .then(
+          (result: Response) => {
+            console.log(result.json);
+            props.onSuccess(results);
+            setBadLogin(false);
+          },
+          (error: Error) => {
+            console.log(error.message);
+            setBadLogin(true);
+          }
+        );
     }
   }
   return (
@@ -37,6 +49,7 @@ export function LoginPanel(props: LoginPanelProps) {
       <Form.Group className="mb-3" controlId='description'>
         <Form.Label>Login to Update RSVP</Form.Label>
       </Form.Group>
+
       <Form.Group className="mb-3" controlId="firstName">
         <Form.Control required type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={results.firstName} />
       </Form.Group>
@@ -52,6 +65,26 @@ export function LoginPanel(props: LoginPanelProps) {
       <Button variant="primary" type="submit">
         Begin
       </Button>
+
+      <Modal show={badLogin} onHide={() => setBadLogin(false)} size='lg' aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Invalid Login
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            The login you provided was not valid. Please make sure your first and last
+            name, as well as the address number for where you live is valid.
+            <br />
+            <br />
+            If you continue to have issues, please reach out to Gerald or Megan for support.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => setBadLogin(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </Form>
   );
 }
