@@ -2,6 +2,9 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { WeddingWebsiteStack } from './wedding-website-stack';
+// Output directory for the website files.
+// var website = require('wedding-website-react');
+// console.log(website.output);
 
 const app = new cdk.App();
 new WeddingWebsiteStack(app, 'WeddingWebsiteStack', {
