@@ -13,9 +13,6 @@ The project uses CDK to deploy via AWS, which hosts a very simple React website 
 ### lerna run build
 Builds everything required for the site. Will output a build folder for the website, and a bin folder for the cdk project.
 
-### lerna run test
-Runs all of the tests for the projects. An interactive test can be run in the website package specifically.
-
 ### lerna run synth
 Synthesizes the CDK project to be deployed.
 
