@@ -1,16 +1,26 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { Bucket, BucketAccessControl } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class WeddingWebsiteStack extends Stack {
+  website = require('wedding-website-react');
+
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const websiteBucket = new Bucket(this, 'wedding-website', {
+      publicReadAccess: true,
+      accessControl: BucketAccessControl.PUBLIC_READ,
+      websiteIndexDocument: 'index.html',
+      websiteErrorDocument: '404.html',
+      removalPolicy: RemovalPolicy.DESTROY
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'WeddingWebsiteQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    new BucketDeployment(this, 'DeployWebsite', {
+      sources: [Source.asset(this.website.output)],
+      destinationBucket: websiteBucket,
+      retainOnDelete: false
+    });
   }
 }

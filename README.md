@@ -19,6 +19,9 @@ Runs all of the tests for the projects. An interactive test can be run in the we
 ### lerna run synth
 Synthesizes the CDK project to be deployed.
 
+### lerna run bootstrap
+Bootstrap the CDK project so that it is deployed to your account.
+
 ### lerna run deploy
 Deploys the previously synthesized CDK project. This effectively deploys the entire website.
 
