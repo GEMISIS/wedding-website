@@ -11,6 +11,10 @@ export interface LoginPanelResults {
   addressNumber: string;
 }
 
+export interface LoginServerResults {
+  success: boolean;
+}
+
 export function LoginPanel(props: LoginPanelProps) {
   const [badLogin, setBadLogin] = useState(false);
   const [results, setResults] = useState<LoginPanelResults>({
@@ -30,18 +34,27 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      fetch(`https://api.geraldandmegan.com/validate?firstName=${results.firstName}&lastName=${results.lastName}&addressNumber=${results.addressNumber}`)
-        .then(
-          (result: Response) => {
-            console.log(result.json);
-            props.onSuccess(results);
+      fetch(`http://api.geraldandmegan.com/validate?`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(results)
+      }).then(response => response.json()).then(
+        (serverResult: LoginServerResults) => {
+          console.log(serverResult);
+          if (serverResult.success) {
             setBadLogin(false);
-          },
-          (error: Error) => {
-            console.log(error.message);
+            props.onSuccess(results);
+          } else {
             setBadLogin(true);
           }
-        );
+        },
+        (error: Error) => {
+          console.log(error.message);
+          setBadLogin(true);
+        }
+      );
     }
   }
   return (

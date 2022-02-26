@@ -1,4 +1,5 @@
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { Cors, LambdaIntegration, RequestValidator, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Bucket, BucketAccessControl } from 'aws-cdk-lib/aws-s3';
@@ -12,6 +13,7 @@ export class WeddingWebsiteStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    // Setup the S3 bucket where all the code will live.
     const websiteBucket = new Bucket(this, 'wedding-website', {
       publicReadAccess: true,
       accessControl: BucketAccessControl.PUBLIC_READ,
@@ -26,10 +28,70 @@ export class WeddingWebsiteStack extends Stack {
       retainOnDelete: false
     });
 
+    // Create the Lambda for API calls.
     const apiLambda = new NodejsFunction(this, 'wedding-api-lambda', {
       runtime: Runtime.NODEJS_14_X,
       entry: path.join(__dirname, '../functions/apiEntryPoint.ts'),
       handler: 'handler'
+    });
+
+    // Create our API Gateway
+    const weddingAPI = new RestApi(this, 'wedding-api', {
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+      },
+    });
+    const weddingAPIValidator = new RequestValidator(this, 'wedding-api-validator', {
+      restApi: weddingAPI,
+      validateRequestBody: true,
+      validateRequestParameters: true,
+    });
+
+    // User authentication endpoint configuration
+    const weddingValidateItems = weddingAPI.root.addResource('validate', {
+      defaultCorsPreflightOptions: {
+        allowOrigins: Cors.ALL_ORIGINS,
+      },
+    });
+
+    // Transform our requests and responses as appropriate.
+    const weddingAPIIntegration: LambdaIntegration = new LambdaIntegration(apiLambda, {
+      proxy: false,
+      requestTemplates: {
+        'application/json': '$input.json(\'$\')\r\n',
+      },
+      integrationResponses: [
+        {
+          statusCode: '200',
+          responseParameters: {
+            'method.response.header.Access-Control-Allow-Origin': "'*'"
+          }
+        },
+        {
+          statusCode: '401',
+          selectionPattern: '.*[UNAUTHORIZED].*',
+          responseTemplates: {
+            'application/json': 'invalid request signature',
+          },
+        },
+      ],
+    });
+
+    // Add a POST method for the Discord APIs.
+    weddingValidateItems.addMethod('POST', weddingAPIIntegration, {
+      apiKeyRequired: false,
+      requestValidator: weddingAPIValidator,
+      methodResponses: [
+        {
+          statusCode: '200',
+          responseParameters: {
+            'method.response.header.Access-Control-Allow-Origin': true,
+          }
+        },
+        {
+          statusCode: '401',
+        },
+      ],
     });
   }
 }
