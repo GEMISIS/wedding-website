@@ -34,7 +34,7 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      fetch(`http://api.geraldandmegan.com/validate?`, {
+      fetch(`https://api.geraldandmegan.com/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
