@@ -27,7 +27,7 @@
   },
   "include": [
     "src/**/*.ts"
-  ],
+, "../website/src/types.ts"  ],
   "exclude": [
     "cdk.out",
     "outputs.json"

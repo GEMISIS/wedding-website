@@ -1,5 +1,6 @@
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Cors, LambdaIntegration, RequestValidator, RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Bucket, BucketAccessControl } from 'aws-cdk-lib/aws-s3';
@@ -28,12 +29,24 @@ export class WeddingWebsiteStack extends Stack {
       retainOnDelete: false
     });
 
+    // Create our database with user's info.
+    const registrationDatabase = new Table(this, 'wedding-database', {
+      partitionKey: {
+        name: 'addressNumber',
+        type: AttributeType.STRING
+      }
+    })
+
     // Create the Lambda for API calls.
     const apiLambda = new NodejsFunction(this, 'wedding-api-lambda', {
       runtime: Runtime.NODEJS_14_X,
       entry: path.join(__dirname, '../functions/apiEntryPoint.ts'),
-      handler: 'handler'
+      handler: 'handler',
+      environment: {
+        REGISTRATION_TABLE: registrationDatabase.tableName
+      }
     });
+    registrationDatabase.grantReadWriteData(apiLambda);
 
     // Create our API Gateway
     const weddingAPI = new RestApi(this, 'wedding-api', {
@@ -48,7 +61,7 @@ export class WeddingWebsiteStack extends Stack {
     });
 
     // User authentication endpoint configuration
-    const weddingValidateItems = weddingAPI.root.addResource('validate', {
+    const weddingValidateItems = weddingAPI.root.addResource('registration', {
       defaultCorsPreflightOptions: {
         allowOrigins: Cors.ALL_ORIGINS,
       },

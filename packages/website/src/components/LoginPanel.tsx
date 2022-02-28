@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
+import { LoginServerResults } from '../types';
 
 interface LoginPanelProps {
   onSuccess: (results: LoginPanelResults) => void;
@@ -9,10 +10,6 @@ export interface LoginPanelResults {
   firstName: string;
   lastName: string;
   addressNumber: string;
-}
-
-export interface LoginServerResults {
-  success: boolean;
 }
 
 export function LoginPanel(props: LoginPanelProps) {
@@ -34,7 +31,7 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      fetch(`https://api.geraldandmegan.com/validate`, {
+      fetch(`https://api.geraldandmegan.com/registration`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
