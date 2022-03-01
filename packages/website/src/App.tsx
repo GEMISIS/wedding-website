@@ -1,21 +1,23 @@
-import HelloMessage from './components/HelloMessage';
-import { LoginPanel, LoginPanelResults } from './components/LoginPanel';
+import { LoginPanel } from './components/LoginPanel';
 
 import './App.css';
 import { useState } from 'react';
+import { LoginServerResults } from './types';
+import { HelloMessage } from './components/HelloMessage';
+import { FamilyRegistration } from './components/FamilyRegistration';
 
-var loginResults: LoginPanelResults | undefined;
+var loginResults: LoginServerResults;
 
 function App() {
   const [validated, setValidated] = useState(false);
 
-  function onLoginSuccess(results: LoginPanelResults) {
+  function onLoginSuccess(results: LoginServerResults) {
     loginResults = results;
     setValidated(true);
   }
 
   var loginPanel = <LoginPanel onSuccess={onLoginSuccess} />
-  var helloPanel = <HelloMessage myname={loginResults ? `${loginResults.firstName} ${loginResults.lastName}` : 'Invalid name'} />;
+  var helloPanel = <FamilyRegistration loginServerResults={loginResults} />;
 
   return (
     <div className="App">

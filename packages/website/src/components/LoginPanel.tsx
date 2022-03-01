@@ -3,7 +3,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { LoginServerResults } from '../types';
 
 interface LoginPanelProps {
-  onSuccess: (results: LoginPanelResults) => void;
+  onSuccess: (results: LoginServerResults) => void;
 }
 
 export interface LoginPanelResults {
@@ -42,7 +42,7 @@ export function LoginPanel(props: LoginPanelProps) {
           console.log(serverResult);
           if (serverResult.success) {
             setBadLogin(false);
-            props.onSuccess(results);
+            props.onSuccess(serverResult);
           } else {
             setBadLogin(true);
           }
