@@ -61,11 +61,11 @@ export function LoginPanel(props: LoginPanelProps) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="firstName">
-        <Form.Control required type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={results.firstName} />
+        <Form.Control required autoComplete='given-name' type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={results.firstName} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="lastName">
-        <Form.Control required type="text" name='lastName' placeholder="Last Name" onChange={onInputChange} value={results.lastName} />
+        <Form.Control required autoComplete='family-name' type="text" name='lastName' placeholder="Last Name" onChange={onInputChange} value={results.lastName} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="addressNumber">

@@ -39,7 +39,7 @@ export function PersonRegistration(props: PersonRegistrationProps) {
 
       <Form.Group className="mb-3" key={'attending-' + uniqueName} controlId={'attending-' + uniqueName}>
         <Form.Label>Attending?
-          <Form.Check required type="checkbox" name='attending' onChange={onInputChange} defaultChecked={personInfoUpdateResults.attending} />
+          <Form.Check type="checkbox" name='attending' onChange={onInputChange} defaultChecked={personInfoUpdateResults.attending} />
         </Form.Label>
         <br hidden={!personInfoUpdateResults.attending} />
 

@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { LoginServerResults, PersonInfo, UpdateFamilyInfoRequest } from "../types";
 import { PersonRegistration } from "./PersonRegistration";
@@ -17,6 +17,19 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
     };
     if (tempResults.familyInfo !== undefined) {
       tempResults.familyInfo.people[index] = personInfo;
+    }
+    setResults(tempResults);
+  }
+
+  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const tempResults = {
+      ...results
+    };
+    if (tempResults.familyInfo !== undefined) {
+      tempResults.familyInfo = {
+        ...tempResults.familyInfo,
+        [event.currentTarget.name]: event.currentTarget.value
+      };
     }
     setResults(tempResults);
   }
@@ -54,6 +67,17 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
   }
   return (
     <Form onSubmit={validateLogin}>
+      <hr />
+      <Form.Label>Family Contact Info</Form.Label>
+      <hr />
+      <Form.Group className="mb-3" controlId="email">
+        <Form.Control autoComplete='email' type="text" name='email' placeholder="Email" onChange={onInputChange} value={results.familyInfo?.email} />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="phoneNumber">
+        <Form.Control autoComplete='phone-number' type="text" name='phoneNumber' placeholder="Phone Number" onChange={onInputChange} value={results.familyInfo?.phoneNumber} />
+      </Form.Group>
+
       {
         props.loginServerResults.familyInfo?.people.map((value, index) => {
           return (
@@ -64,7 +88,7 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
           );
         })
       }
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit" style={{marginBottom: 50}}>
         Save Registration
       </Button>
 
