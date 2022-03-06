@@ -1,21 +1,25 @@
-import { DynamoDB } from "aws-sdk";
-import { QueryInput } from "aws-sdk/clients/dynamodb";
+import { AWSError, DynamoDB } from "aws-sdk";
+import { Converter, QueryInput, QueryOutput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
 import { FamilyInfo, LoginInfo, PersonInfo, UpdateFamilyInfoRequest } from "wedding-website-react/src/types";
 import { registrationTableName } from "../constants/EnvironmentProps";
 
 const registrationInfoTable = new DynamoDB();
 
-export async function getFamilyInfo(loginInfo: LoginInfo): Promise<FamilyInfo | undefined> {
+async function getHouseInfo(addressNumber: string): Promise<QueryOutput> {
   var queryParams: QueryInput = {
     TableName: registrationTableName,
     KeyConditionExpression: 'addressNumber = :addressNumber',
     ExpressionAttributeValues: {
       ':addressNumber': {
-        S: `${loginInfo.addressNumber}`
+        S: addressNumber
       }
     }
   };
-  var queryResults = await registrationInfoTable.query(queryParams).promise();
+  return await registrationInfoTable.query(queryParams).promise();
+}
+
+export async function getFamilyInfo(loginInfo: LoginInfo): Promise<FamilyInfo | undefined> {
+  var queryResults = await getHouseInfo(loginInfo.addressNumber);
   if ((queryResults.Count ?? 0) > 0) {
     // Map each house result that is returned (should be just 1, but just to be safe)
     const houseResults = queryResults.Items?.map(houses => {
@@ -30,17 +34,9 @@ export async function getFamilyInfo(loginInfo: LoginInfo): Promise<FamilyInfo | 
 
         if (isInFamily) {
           // If they are in the family, get all of the other family members too.
-          const personResults = peopleList?.map(person => {
-            return {
-              firstName: person?.M?.firstName.S,
-              lastName: person?.M?.lastName.S,
-              attending: person?.M?.attending?.BOOL,
-              isChild: person?.M?.isChild?.BOOL,
-              entree: person?.M?.entree?.S,
-              vaxCard: person?.M?.vaxCard?.S,
-            } as PersonInfo;
-          }).filter(x => x);
-          console.log(`Person results: ${JSON.stringify(personResults)}`);
+          const personResults = peopleList
+            ?.map(person => person?.M ? Converter.unmarshall(person?.M) as PersonInfo : undefined)
+            .filter(x => x);
 
           return (personResults != undefined && personResults?.length >= 1) ? {
             people: personResults,
@@ -52,7 +48,6 @@ export async function getFamilyInfo(loginInfo: LoginInfo): Promise<FamilyInfo | 
         }
       }).filter(x => x);
 
-      console.log(`Family results: ${JSON.stringify(familyResults)}`);
       return familyResults?.length == 1 ? familyResults[0] : undefined;
     }).filter(x => x);
 
@@ -62,6 +57,72 @@ export async function getFamilyInfo(loginInfo: LoginInfo): Promise<FamilyInfo | 
 }
 
 export async function updateFamilyInfo(updateRequest: UpdateFamilyInfoRequest): Promise<FamilyInfo | undefined> {
-  // TODO: Update the family information here.
-  return getFamilyInfo(updateRequest.loginInfo);
+  var results = undefined;
+  var queryResults = await getHouseInfo(updateRequest.loginInfo.addressNumber);
+  if ((queryResults.Count ?? 0) > 0) {
+    var isInFamily = false;
+
+    // Map each house result that is returned (should be just 1, but just to be safe)
+    for (var i = 0; queryResults.Items && i < queryResults.Items.length && !isInFamily; i++) {
+      const houses = queryResults.Items[i];
+
+      // Go through all of the famlies in the house to find which one the person belong's to.
+      for (var j = 0; houses?.families.L && j < houses.families.L.length && !isInFamily; j++) {
+        const family = houses.families.L[j];
+        const peopleList = family?.M?.people?.L;
+
+        // Check if the person is in the family.
+        isInFamily = (peopleList != undefined) && peopleList.filter(person => {
+          const personInfo = person?.M;
+          return personInfo?.firstName?.S == `${updateRequest.loginInfo.firstName}` && personInfo?.lastName?.S == `${updateRequest.loginInfo.lastName}`;
+        }).length > 0;
+
+        if (isInFamily && (family?.M != undefined)) {
+          var updateItemParams: UpdateItemInput = {
+            TableName: registrationTableName,
+            Key: {
+              addressNumber: {
+                S: `${updateRequest.loginInfo.addressNumber}`
+              }
+            },
+            UpdateExpression: `SET families[${j}].#email = :email, families[${j}].#phoneNumber = :phoneNumber, families[${j}].#people = :people`,
+            ExpressionAttributeNames: {
+              '#email': 'email',
+              '#phoneNumber': 'phoneNumber',
+              '#people': 'people'
+            },
+            ExpressionAttributeValues: {
+              ':email': {
+                S: updateRequest.familyInfo.email
+              },
+              ':phoneNumber': {
+                S: updateRequest.familyInfo.phoneNumber
+              },
+              ':people': {
+                L: updateRequest.familyInfo.people.map(person => {
+                  return {
+                    M: Converter.marshall(person)
+                  }
+                })
+              }
+            }
+          };
+          try {
+            const response = await registrationInfoTable.updateItem(updateItemParams).promise();
+            if (response.$response.error) {
+              console.log(`Update params: ${JSON.stringify(updateItemParams)}`);
+              console.log(`Error updating item: ${JSON.stringify(response.$response.error)}`);
+            } else {
+              results = await getFamilyInfo(updateRequest.loginInfo);
+            }
+          } catch(error) {
+            console.log(`Update params: ${JSON.stringify(updateItemParams)}`);
+            console.log(`Exception updating item: ${JSON.stringify(error)}`);
+          }
+        }
+      }
+    }
+  }
+
+  return results;
 }

@@ -49,7 +49,7 @@ export function PersonRegistration(props: PersonRegistrationProps) {
         </Form.Label>
         <br hidden={!personInfoUpdateResults.attending} />
         <Form.Label hidden={!personInfoUpdateResults.attending}>Entree Selection</Form.Label>
-        <Form.Select hidden={!personInfoUpdateResults.attending} name='entree' onChange={onInputChange}>
+        <Form.Select hidden={!personInfoUpdateResults.attending} name='entree' onChange={onInputChange} value={personInfoUpdateResults.entree}>
           {Object.keys(EntreeTypes).map((key) => {
             return <option key={'EntreeTypes-' + uniqueName + '-' + key} value={key}>{key}</option>
           })}

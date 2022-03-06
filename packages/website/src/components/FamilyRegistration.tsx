@@ -1,6 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { LoginServerResults, PersonInfo, UpdateFamilyInfoRequest } from "../types";
+import { makeAPIRequest } from "../utils/APIRequests";
+import { NotificationModal } from "./NotificationModal";
 import { PersonRegistration } from "./PersonRegistration";
 
 interface FamilyRegistrationProps {
@@ -9,7 +11,8 @@ interface FamilyRegistrationProps {
 
 export function FamilyRegistration(props: FamilyRegistrationProps) {
   const [results, setResults] = useState<LoginServerResults>(props.loginServerResults);
-  const [badLogin, setBadLogin] = useState(false);
+  const [badSubmission, setBadSubmission] = useState(false);
+  const [goodSubmission, setGoodSubmission] = useState(false);
 
   const onPersonChange = async (personInfo: PersonInfo, index: number) => {
     const tempResults = {
@@ -43,26 +46,10 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
         familyInfo: results.familyInfo
       } as UpdateFamilyInfoRequest;
       console.log(updateRequest);
-      fetch(`https://api.geraldandmegan.com/registration`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateRequest)
-      }).then(response => response.json()).then(
-        (serverResult: LoginServerResults) => {
-          console.log(serverResult);
-          if (serverResult.success) {
-            setBadLogin(false);
-          } else {
-            setBadLogin(true);
-          }
-        },
-        (error: Error) => {
-          console.log(error.message);
-          setBadLogin(true);
-        }
-      );
+      makeAPIRequest(updateRequest, (successful: boolean) => {
+        setBadSubmission(!successful);
+        setGoodSubmission(successful);
+      });
     }
   }
   return (
@@ -92,25 +79,23 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
         Save Registration
       </Button>
 
-      <Modal show={badLogin} onHide={() => setBadLogin(false)} size='lg' aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Invalid Login
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            There was an error saving your registration results. Please try submitting your information again. Note that
-            if you refresh the page, your current information will be lost.
-            <br />
-            <br />
-            If you continue to have issues, please reach out to Gerald or Megan for support.
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={() => setBadLogin(false)}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      <NotificationModal title="Successfully Updated Registration" setVisible={setGoodSubmission} visible={goodSubmission}>
+        <p>
+          Successfully updated your registration! Check your information and feel free to update it before we close this in June.
+          <br />
+          If you have any issues or questions, please reach out to Gerald or Megan for support.
+        </p>
+      </NotificationModal>
+
+      <NotificationModal title="Error Updating Registration" setVisible={setBadSubmission} visible={badSubmission}>
+        <p>
+          There was an error saving your registration results. Please try submitting your information again. Note that
+          if you refresh the page, your current information will be lost.
+          <br />
+          <br />
+          If you continue to have issues, please reach out to Gerald or Megan for support.
+        </p>
+      </NotificationModal>
     </Form>
   )
 }

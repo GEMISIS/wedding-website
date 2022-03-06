@@ -48,3 +48,5 @@ export interface LoginServerResults {
   loginInfo: LoginInfo;
   familyInfo: FamilyInfo | undefined;
 }
+
+export type APIRequest = LoginInfo | UpdateFamilyInfoRequest;

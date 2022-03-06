@@ -1,11 +1,11 @@
-import { LoginInfo, LoginServerResults, UpdateFamilyInfoRequest } from "wedding-website-react/src/types";
+import { APIRequest, LoginInfo, LoginServerResults } from "wedding-website-react/src/types";
 import { getFamilyInfo, updateFamilyInfo } from "./utils/RegistrationInfo";
 
-function isLoginRequest(request: LoginInfo | UpdateFamilyInfoRequest): request is LoginInfo {
-  return (<LoginInfo>request).firstName !== undefined
+function isLoginRequest(request: APIRequest): request is LoginInfo {
+  return 'firstName' in request && request.firstName !== undefined
 }
 
-export async function handler(request: LoginInfo | UpdateFamilyInfoRequest): Promise<LoginServerResults> {
+export async function handler(request: APIRequest): Promise<LoginServerResults> {
   console.log(`Received request: ${JSON.stringify(request)}`);
 
   var loginInfo ,familyInfo;

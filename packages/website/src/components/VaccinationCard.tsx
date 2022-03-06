@@ -17,7 +17,7 @@ export function VaccinationCard(props: VaccinationCardProps) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <b>Vaccination Status: {props.personInfo.vaxCard != undefined ? 'Uploaded' : 'Please Upload'}</b>
+        <b>Vaccination Status: {(props.personInfo.vaxCard != undefined && props.personInfo.vaxCard != '') ? 'Uploaded' : 'Please Upload'}</b>
         <br />
         <Button>Upload</Button>   <Button>Take Photo</Button>
       </Modal.Body>

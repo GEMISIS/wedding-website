@@ -1,6 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { LoginServerResults } from '../types';
+import { makeAPIRequest } from '../utils/APIRequests';
+import { NotificationModal } from './NotificationModal';
 
 interface LoginPanelProps {
   onSuccess: (results: LoginServerResults) => void;
@@ -31,27 +33,12 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      fetch(`https://api.geraldandmegan.com/registration`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(results)
-      }).then(response => response.json()).then(
-        (serverResult: LoginServerResults) => {
-          console.log(serverResult);
-          if (serverResult.success) {
-            setBadLogin(false);
-            props.onSuccess(serverResult);
-          } else {
-            setBadLogin(true);
-          }
-        },
-        (error: Error) => {
-          console.log(error.message);
-          setBadLogin(true);
+      makeAPIRequest(results, (successful: boolean, serverResult: LoginServerResults | undefined) => {
+        setBadLogin(!serverResult?.success);
+        if (successful && serverResult !== undefined) {
+          props.onSuccess(serverResult);
         }
-      );
+      });
     }
   }
   return (
@@ -76,25 +63,15 @@ export function LoginPanel(props: LoginPanelProps) {
         Begin
       </Button>
 
-      <Modal show={badLogin} onHide={() => setBadLogin(false)} size='lg' aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Invalid Login
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            The login you provided was not valid. Please make sure your first and last
-            name, as well as the address number for where you live is valid.
-            <br />
-            <br />
-            If you continue to have issues, please reach out to Gerald or Megan for support.
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={() => setBadLogin(false)}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+      <NotificationModal title="Invalid Login" setVisible={setBadLogin} visible={badLogin}>
+        <p>
+          The login you provided was not valid. Please make sure your first and last
+          name, as well as the address number for where you live is valid.
+          <br />
+          <br />
+          If you continue to have issues, please reach out to Gerald or Megan for support.
+        </p>
+      </NotificationModal>
     </Form>
   );
 }
