@@ -1,6 +1,6 @@
-import { APIRequest, LoginServerResults } from "../types";
+import { APIRequest, APIResult } from "../types";
 
-export function makeAPIRequest(apiRequest: APIRequest, successCallback: (successful: boolean, serverResult: LoginServerResults | undefined) => (void)) {
+export function makeAPIRequest(apiRequest: APIRequest, successCallback: (successful: boolean, serverResult: APIResult | undefined) => (void)) {
   fetch(`https://api.geraldandmegan.com/registration`, {
     method: 'POST',
     headers: {
@@ -8,7 +8,7 @@ export function makeAPIRequest(apiRequest: APIRequest, successCallback: (success
     },
     body: JSON.stringify(apiRequest)
   }).then(response => response.json()).then(
-    (serverResult: LoginServerResults) => {
+    (serverResult: APIResult) => {
       console.log(serverResult);
       successCallback(serverResult.success, serverResult);
     },

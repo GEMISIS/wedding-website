@@ -1,6 +1,6 @@
-import { AWSError, DynamoDB } from "aws-sdk";
+import { DynamoDB } from "aws-sdk";
 import { Converter, QueryInput, QueryOutput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
-import { FamilyInfo, LoginInfo, PersonInfo, UpdateFamilyInfoRequest } from "wedding-website-react/src/types";
+import { FamilyInfo, LoginRequest, PersonInfo, UpdateFamilyInfoRequest } from "website/src/types";
 import { registrationTableName } from "../constants/EnvironmentProps";
 
 const registrationInfoTable = new DynamoDB();
@@ -18,7 +18,7 @@ async function getHouseInfo(addressNumber: string): Promise<QueryOutput> {
   return await registrationInfoTable.query(queryParams).promise();
 }
 
-export async function getFamilyInfo(loginInfo: LoginInfo): Promise<FamilyInfo | undefined> {
+export async function getFamilyInfo(loginInfo: LoginRequest): Promise<FamilyInfo | undefined> {
   var queryResults = await getHouseInfo(loginInfo.addressNumber);
   if ((queryResults.Count ?? 0) > 0) {
     // Map each house result that is returned (should be just 1, but just to be safe)

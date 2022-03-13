@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { EntreeTypes, PersonInfo, VaxStatuses } from "../types";
-import { VaccinationCard } from './VaccinationCard';
 
 interface PersonRegistrationProps {
   personInfo: PersonInfo;
@@ -9,7 +8,6 @@ interface PersonRegistrationProps {
 }
 
 export function PersonRegistration(props: PersonRegistrationProps) {
-  const [vaxModalVisible, setVaxModalVisible] = useState(false);
   const [personInfoUpdateResults, setPersonInfoUpdateResults] = useState<PersonInfo>(props.personInfo);
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -17,11 +15,6 @@ export function PersonRegistration(props: PersonRegistrationProps) {
       ...personInfoUpdateResults,
       [event.currentTarget.name]: (event.currentTarget.type === 'checkbox') ? (event.currentTarget as HTMLInputElement).checked : event.currentTarget.value
     });
-  };
-
-  const onVaxUpload = (personInfo: PersonInfo) => {
-    console.log('Uploading vaccination card...');
-    // TODO: upload here
   };
 
   useEffect(() => {
@@ -61,10 +54,6 @@ export function PersonRegistration(props: PersonRegistrationProps) {
           })}
         </Form.Select>
       </Form.Group>
-
-      {/* <VaccinationCard show={vaxModalVisible} setVisible={setVaxModalVisible} onChange={onVaxUpload} personInfo={props.personInfo} /> */}
-
-      {/* <Button onClick={() => setVaxModalVisible(true)}>Upload Vaccination Card</Button> */}
     </Form.Group>
   );
 }

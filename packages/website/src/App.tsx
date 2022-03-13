@@ -2,22 +2,21 @@ import { LoginPanel } from './components/LoginPanel';
 
 import './App.css';
 import { useState } from 'react';
-import { LoginServerResults } from './types';
-import { HelloMessage } from './components/HelloMessage';
+import { APIResult } from './types';
 import { FamilyRegistration } from './components/FamilyRegistration';
 
-var loginResults: LoginServerResults;
+var loginResults: APIResult;
 
 function App() {
   const [validated, setValidated] = useState(false);
 
-  function onLoginSuccess(results: LoginServerResults) {
+  function onLoginSuccess(results: APIResult) {
     loginResults = results;
     setValidated(true);
   }
 
   var loginPanel = <LoginPanel onSuccess={onLoginSuccess} />
-  var helloPanel = <FamilyRegistration loginServerResults={loginResults} />;
+  var helloPanel = <FamilyRegistration apiResults={loginResults} />;
 
   return (
     <div className="App">

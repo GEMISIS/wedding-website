@@ -27,7 +27,7 @@ A family object will look like so:
       'attending': true,
       'isChild': false,
       'entree': 'vegetarian',
-      'vaxCard': 'VAX_IMAGE_NAME1.JPG'
+      'vaxStatus': 'Vaccinated'
     },
     {
       'firstName': 'Jane',
@@ -35,7 +35,7 @@ A family object will look like so:
       'attending': true,
       'isChild': false,
       'entree': 'beef',
-      'vaxCard': 'VAX_IMAGE_NAME2.JPG'
+      'vaxStatus': 'Boosted'
     }
   ],
   'email': 'john.doe@gmail.com',
@@ -46,7 +46,6 @@ A family object will look like so:
 ## Setup
 You will need to install the following before you can use this project:
 - AWS CDK (Cloud Development Kit)
-- Docker (For deploying several things via CDK)
 
 ## Commands
 

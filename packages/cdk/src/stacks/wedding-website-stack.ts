@@ -9,7 +9,7 @@ import { Construct } from 'constructs';
 import * as path from 'path';
 
 export class WeddingWebsiteStack extends Stack {
-  website = require('wedding-website-react');
+  website = require('website');
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);

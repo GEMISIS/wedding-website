@@ -1,14 +1,5 @@
 
 /**
- * The information a user needs to provide to login.
- */
-export interface LoginInfo {
-  firstName: string;
-  lastName: string;
-  addressNumber: string;
-}
-
-/**
  * The types of entrees available to attendees.
  */
 export enum EntreeTypes {
@@ -37,8 +28,6 @@ export interface PersonInfo {
   isChild?:boolean;
   entree?: EntreeTypes;
   vaxStatus?: VaxStatuses;
-  // Unused, will rely on folks replying honestly.
-  vaxCard?: string;
 }
 
 /**
@@ -50,15 +39,47 @@ export interface FamilyInfo {
   phoneNumber: string;
 }
 
-export interface UpdateFamilyInfoRequest {
-  loginInfo: LoginInfo;
-  familyInfo: FamilyInfo;
+/**
+ * The possible request types that can be sent to the APIs.
+ */
+export enum APIRequestTypes {
+  Unknown,
+  LoginRequest,
+  UpdateFamilyInfoRequest,
+  UpdatePersonInfoRequest
 }
 
-export interface LoginServerResults {
+/**
+ * The base class for all API requests.
+ */
+export class APIRequest {
+  readonly type?: APIRequestTypes = APIRequestTypes.Unknown;
+}
+
+/**
+ * The information a user needs to provide to login.
+ */
+export class LoginRequest extends APIRequest {
+  firstName: string = '';
+  lastName: string = '';
+  addressNumber: string = '';
+  readonly type?: APIRequestTypes = APIRequestTypes.LoginRequest;
+}
+
+/**
+ * The information a user needs to update their family's registration info.
+ */
+export class UpdateFamilyInfoRequest extends APIRequest {
+  loginInfo!: LoginRequest;
+  familyInfo!: FamilyInfo;
+  readonly type: APIRequestTypes = APIRequestTypes.UpdateFamilyInfoRequest;
+}
+
+/**
+ * The results from the API.
+ */
+export interface APIResult {
   success: boolean;
-  loginInfo: LoginInfo;
+  loginInfo: LoginRequest | undefined;
   familyInfo: FamilyInfo | undefined;
 }
-
-export type APIRequest = LoginInfo | UpdateFamilyInfoRequest;

@@ -1,16 +1,16 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { LoginServerResults, PersonInfo, UpdateFamilyInfoRequest } from "../types";
+import { APIResult, PersonInfo, UpdateFamilyInfoRequest } from "../types";
 import { makeAPIRequest } from "../utils/APIRequests";
 import { NotificationModal } from "./NotificationModal";
 import { PersonRegistration } from "./PersonRegistration";
 
 interface FamilyRegistrationProps {
-  loginServerResults: LoginServerResults;
+  apiResults: APIResult;
 }
 
 export function FamilyRegistration(props: FamilyRegistrationProps) {
-  const [results, setResults] = useState<LoginServerResults>(props.loginServerResults);
+  const [results, setResults] = useState<APIResult>(props.apiResults);
   const [badSubmission, setBadSubmission] = useState(false);
   const [goodSubmission, setGoodSubmission] = useState(false);
 
@@ -66,7 +66,7 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
       </Form.Group>
 
       {
-        props.loginServerResults.familyInfo?.people.map((value, index) => {
+        props.apiResults.familyInfo?.people.map((value, index) => {
           return (
             <div key={index.toString()}>
               <PersonRegistration personInfo={value} onChange={(personInfo) => onPersonChange(personInfo, index)} />

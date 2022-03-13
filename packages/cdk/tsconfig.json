@@ -26,8 +26,7 @@
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*.ts"
-, "../website/src/types.ts"  ],
+    "src/**/*.ts"  ],
   "exclude": [
     "cdk.out",
     "outputs.json"
