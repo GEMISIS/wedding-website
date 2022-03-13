@@ -18,6 +18,16 @@ export enum EntreeTypes {
 }
 
 /**
+ * The possible vaccination statuses for individuals.
+ */
+export enum VaxStatuses {
+  Unknown = 'Unknown',
+  Unvaccinated = 'Unvaccinated',
+  Vaccinated = 'Vaccinated',
+  Boosted = 'Vaccinated and Boosted',
+}
+
+/**
  * The registration info for each person.
  */
 export interface PersonInfo {
@@ -26,6 +36,8 @@ export interface PersonInfo {
   attending?: boolean;
   isChild?:boolean;
   entree?: EntreeTypes;
+  vaxStatus?: VaxStatuses;
+  // Unused, will rely on folks replying honestly.
   vaxCard?: string;
 }
 
