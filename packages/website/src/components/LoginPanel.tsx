@@ -1,20 +1,20 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { APIResult, LoginRequest } from '../types';
+import { APIResult, FamilyInfo, LoginRequest } from '../types';
 import { makeAPIRequest } from '../utils/APIRequests';
 import { NotificationModal } from './NotificationModal';
 
 interface LoginPanelProps {
-  onSuccess: (results: APIResult) => void;
+  onSuccess: (loginInfo: LoginRequest, familyInfo: FamilyInfo) => void;
 }
 
 export function LoginPanel(props: LoginPanelProps) {
   const [badLogin, setBadLogin] = useState(false);
-  const [results, setResults] = useState<LoginRequest>(new LoginRequest());
+  const [request, setRequest] = useState<LoginRequest>(new LoginRequest());
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setResults({
-      ...results,
+    setRequest({
+      ...request,
       [event.currentTarget.name]: event.currentTarget.value
     } as LoginRequest);
   }
@@ -23,10 +23,13 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      makeAPIRequest(results, (successful: boolean, serverResult: APIResult | undefined) => {
-        setBadLogin(!serverResult?.success);
-        if (successful && serverResult !== undefined) {
-          props.onSuccess(serverResult);
+      makeAPIRequest(request, (successful: boolean, serverResult: APIResult | undefined) => {
+        const loginSuccess = (successful && (serverResult !== undefined) && (serverResult.familyInfo !== undefined));
+        setBadLogin(!loginSuccess);
+        // HACK: Because the boolean is a type check (e.g. familyInfo is not undefined) at runtime, we
+        // need to still do another check for undefined here for the compiler.
+        if (loginSuccess && (serverResult.familyInfo !== undefined)) {
+          props.onSuccess(request, serverResult.familyInfo);
         }
       });
     }
@@ -38,15 +41,15 @@ export function LoginPanel(props: LoginPanelProps) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="firstName">
-        <Form.Control required autoComplete='given-name' type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={results.firstName} />
+        <Form.Control required autoComplete='given-name' type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={request.firstName} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="lastName">
-        <Form.Control required autoComplete='family-name' type="text" name='lastName' placeholder="Last Name" onChange={onInputChange} value={results.lastName} />
+        <Form.Control required autoComplete='family-name' type="text" name='lastName' placeholder="Last Name" onChange={onInputChange} value={request.lastName} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="addressNumber">
-        <Form.Control required type="number" name='addressNumber' placeholder="Address Number" onChange={onInputChange} value={results.addressNumber} />
+        <Form.Control required type="number" name='addressNumber' placeholder="Address Number" onChange={onInputChange} value={request.addressNumber} />
       </Form.Group>
 
       <Button variant="primary" type="submit">

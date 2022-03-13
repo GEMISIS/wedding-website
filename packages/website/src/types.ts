@@ -73,6 +73,12 @@ export class UpdateFamilyInfoRequest extends APIRequest {
   loginInfo!: LoginRequest;
   familyInfo!: FamilyInfo;
   readonly type: APIRequestTypes = APIRequestTypes.UpdateFamilyInfoRequest;
+
+  constructor(loginInfo: LoginRequest, familyInfo: FamilyInfo) {
+    super();
+    this.loginInfo = loginInfo;
+    this.familyInfo = familyInfo;
+  }
 }
 
 /**
@@ -80,6 +86,5 @@ export class UpdateFamilyInfoRequest extends APIRequest {
  */
 export interface APIResult {
   success: boolean;
-  loginInfo: LoginRequest | undefined;
   familyInfo: FamilyInfo | undefined;
 }

@@ -1,51 +1,42 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { APIResult, PersonInfo, UpdateFamilyInfoRequest } from "../types";
-import { makeAPIRequest } from "../utils/APIRequests";
-import { NotificationModal } from "./NotificationModal";
+import { FamilyInfo, LoginRequest, PersonInfo, UpdateFamilyInfoRequest } from "../../types";
+import { makeAPIRequest } from "../../utils/APIRequests";
+import { NotificationModal } from "../NotificationModal";
 import { PersonRegistration } from "./PersonRegistration";
 
 interface FamilyRegistrationProps {
-  apiResults: APIResult;
+  loginInfo: LoginRequest;
+  startingFamilyInfo: FamilyInfo;
 }
 
 export function FamilyRegistration(props: FamilyRegistrationProps) {
-  const [results, setResults] = useState<APIResult>(props.apiResults);
+  const [familyInfo, setFamilyInfo] = useState<FamilyInfo>(props.startingFamilyInfo);
   const [badSubmission, setBadSubmission] = useState(false);
   const [goodSubmission, setGoodSubmission] = useState(false);
 
   const onPersonChange = async (personInfo: PersonInfo, index: number) => {
     const tempResults = {
-      ...results
+      ...familyInfo
     };
-    if (tempResults.familyInfo !== undefined) {
-      tempResults.familyInfo.people[index] = personInfo;
+    if (tempResults !== undefined) {
+      tempResults.people[index] = personInfo;
     }
-    setResults(tempResults);
+    setFamilyInfo(tempResults);
   }
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const tempResults = {
-      ...results
-    };
-    if (tempResults.familyInfo !== undefined) {
-      tempResults.familyInfo = {
-        ...tempResults.familyInfo,
-        [event.currentTarget.name]: event.currentTarget.value
-      };
-    }
-    setResults(tempResults);
+    setFamilyInfo({
+      ...familyInfo,
+      [event.currentTarget.name]: event.currentTarget.value
+    });
   }
 
   const validateLogin = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      const updateRequest = {
-        loginInfo: results.loginInfo,
-        familyInfo: results.familyInfo
-      } as UpdateFamilyInfoRequest;
-      console.log(updateRequest);
+      const updateRequest = new UpdateFamilyInfoRequest(props.loginInfo, familyInfo);
       makeAPIRequest(updateRequest, (successful: boolean) => {
         setBadSubmission(!successful);
         setGoodSubmission(successful);
@@ -58,15 +49,15 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
       <Form.Label>Family Contact Info</Form.Label>
       <hr />
       <Form.Group className="mb-3" controlId="email">
-        <Form.Control autoComplete='email' type="text" name='email' placeholder="Email" onChange={onInputChange} value={results.familyInfo?.email} />
+        <Form.Control autoComplete='email' type="text" name='email' placeholder="Email" onChange={onInputChange} value={familyInfo?.email} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="phoneNumber">
-        <Form.Control autoComplete='phone-number' type="text" name='phoneNumber' placeholder="Phone Number" onChange={onInputChange} value={results.familyInfo?.phoneNumber} />
+        <Form.Control autoComplete='phone-number' type="text" name='phoneNumber' placeholder="Phone Number" onChange={onInputChange} value={familyInfo?.phoneNumber} />
       </Form.Group>
 
       {
-        props.apiResults.familyInfo?.people.map((value, index) => {
+        familyInfo?.people.map((value, index) => {
           return (
             <div key={index.toString()}>
               <PersonRegistration personInfo={value} onChange={(personInfo) => onPersonChange(personInfo, index)} />

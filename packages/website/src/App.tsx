@@ -2,21 +2,22 @@ import { LoginPanel } from './components/LoginPanel';
 
 import './App.css';
 import { useState } from 'react';
-import { APIResult } from './types';
-import { FamilyRegistration } from './components/FamilyRegistration';
-
-var loginResults: APIResult;
+import { FamilyInfo, LoginRequest } from './types';
+import { FamilyRegistration } from './components/registration/FamilyRegistration';
 
 function App() {
-  const [validated, setValidated] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [familyInfo, setFamilyInfo] = useState({} as FamilyInfo);
+  const [loginInfo, setLoginInfo] = useState(new LoginRequest());
 
-  function onLoginSuccess(results: APIResult) {
-    loginResults = results;
-    setValidated(true);
+  function onLoginSuccess(loginInfo: LoginRequest, familyInfo: FamilyInfo) {
+    setLoginInfo(loginInfo);
+    setFamilyInfo(familyInfo);
+    setLoggedIn(true);
   }
 
   var loginPanel = <LoginPanel onSuccess={onLoginSuccess} />
-  var helloPanel = <FamilyRegistration apiResults={loginResults} />;
+  var registrationPanel = <FamilyRegistration loginInfo={loginInfo} startingFamilyInfo={familyInfo} />;
 
   return (
     <div className="App">
@@ -25,7 +26,7 @@ function App() {
           <h1 className='display-4'>Gerald and Megan's Wedding</h1>
         </div>
         <br />
-        {validated ? helloPanel : loginPanel}
+        {loggedIn ? registrationPanel : loginPanel}
       </header>
     </div>
   );

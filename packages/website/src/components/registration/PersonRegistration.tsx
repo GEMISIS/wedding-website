@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import { EntreeTypes, PersonInfo, VaxStatuses } from "../types";
+import { EntreeTypes, PersonInfo, VaxStatuses } from "../../types";
 
 interface PersonRegistrationProps {
   personInfo: PersonInfo;
