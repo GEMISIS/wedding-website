@@ -1,8 +1,7 @@
-import { LoginPanel } from './components/LoginPanel';
-
 import './App.css';
 import { useState } from 'react';
 import { FamilyInfo, LoginRequest } from './types';
+import { LoginPanel } from './components/LoginPanel';
 import { FamilyRegistration } from './components/registration/FamilyRegistration';
 
 function App() {

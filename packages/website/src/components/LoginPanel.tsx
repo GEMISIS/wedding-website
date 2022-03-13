@@ -10,11 +10,11 @@ interface LoginPanelProps {
 
 export function LoginPanel(props: LoginPanelProps) {
   const [badLogin, setBadLogin] = useState(false);
-  const [request, setRequest] = useState<LoginRequest>(new LoginRequest());
+  const [loginRequest, setLoginRequest] = useState<LoginRequest>(new LoginRequest());
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setRequest({
-      ...request,
+    setLoginRequest({
+      ...loginRequest,
       [event.currentTarget.name]: event.currentTarget.value
     } as LoginRequest);
   }
@@ -23,13 +23,13 @@ export function LoginPanel(props: LoginPanelProps) {
     event.preventDefault();
     event.stopPropagation();
     if (event.currentTarget.checkValidity() !== false) {
-      makeAPIRequest(request, (successful: boolean, serverResult: APIResult | undefined) => {
-        const loginSuccess = (successful && (serverResult !== undefined) && (serverResult.familyInfo !== undefined));
+      makeAPIRequest(loginRequest, (successful: boolean, serverResult: APIResult | undefined) => {
+        // Need to create a const of the familyInfo to be able to nicely check it.
+        const familyInfo = serverResult?.familyInfo;
+        const loginSuccess = (successful && (serverResult !== undefined) && serverResult.success && (familyInfo !== undefined));
         setBadLogin(!loginSuccess);
-        // HACK: Because the boolean is a type check (e.g. familyInfo is not undefined) at runtime, we
-        // need to still do another check for undefined here for the compiler.
-        if (loginSuccess && (serverResult.familyInfo !== undefined)) {
-          props.onSuccess(request, serverResult.familyInfo);
+        if (loginSuccess) {
+          props.onSuccess(loginRequest, familyInfo);
         }
       });
     }
@@ -41,15 +41,15 @@ export function LoginPanel(props: LoginPanelProps) {
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="firstName">
-        <Form.Control required autoComplete='given-name' type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={request.firstName} />
+        <Form.Control required autoComplete='given-name' type="text" name='firstName' placeholder="First Name" onChange={onInputChange} value={loginRequest.firstName} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="lastName">
-        <Form.Control required autoComplete='family-name' type="text" name='lastName' placeholder="Last Name" onChange={onInputChange} value={request.lastName} />
+        <Form.Control required autoComplete='family-name' type="text" name='lastName' placeholder="Last Name" onChange={onInputChange} value={loginRequest.lastName} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="addressNumber">
-        <Form.Control required type="number" name='addressNumber' placeholder="Address Number" onChange={onInputChange} value={request.addressNumber} />
+        <Form.Control required type="number" name='addressNumber' placeholder="Address Number" onChange={onInputChange} value={loginRequest.addressNumber} />
       </Form.Group>
 
       <Button variant="primary" type="submit">
