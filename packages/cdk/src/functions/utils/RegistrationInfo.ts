@@ -1,9 +1,14 @@
 import { DynamoDB } from "aws-sdk";
 import { Converter, QueryInput, QueryOutput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
-import { FamilyInfo, LoginRequest, UpdateFamilyInfoRequest } from "website/src/types";
+import { FamilyInfo, LoginRequest, PersonInfo, UpdateFamilyInfoRequest } from "website/src/types";
 import { registrationTableName } from "../constants/EnvironmentProps";
 
 const registrationInfoTable = new DynamoDB();
+
+function personMatch(personInfo: PersonInfo, dbEntry: DynamoDB.AttributeValue): boolean {
+  return dbEntry?.M?.firstName?.S?.toLowerCase() == `${personInfo.firstName.toLowerCase()}` &&
+    dbEntry?.M?.lastName?.S?.toLowerCase() == `${personInfo.lastName.toLowerCase()}`;
+}
 
 async function getHouseInfo(addressNumber: string): Promise<QueryOutput> {
   var queryParams: QueryInput = {
@@ -27,11 +32,7 @@ export async function getFamilyInfo(loginInfo: LoginRequest): Promise<FamilyInfo
       const families = houses?.families.L ?? [];
       // Go through all of the famlies in the house to find which one the person belong's to.
       const familyIndex = families.findIndex(
-        family => (family?.M?.people?.L?.find(
-          person => (
-            person?.M?.firstName?.S?.toLowerCase() == `${loginInfo.firstName.toLowerCase()}` &&
-            person?.M?.lastName?.S?.toLowerCase() == `${loginInfo.lastName.toLowerCase()}`)
-        )
+        family => (family?.M?.people?.L?.find(person => personMatch(loginInfo, person))
       )) ?? -1;
 
       const family = (familyIndex > -1) ? families[familyIndex].M : undefined;
@@ -59,10 +60,7 @@ export async function updateFamilyInfo(updateRequest: UpdateFamilyInfoRequest): 
         const peopleList = family?.M?.people?.L;
 
         // Check if the person is in the family.
-        isInFamily = (peopleList != undefined) && peopleList.filter(person => (
-          person?.M?.firstName?.S?.toLowerCase() == `${updateRequest.loginInfo.firstName.toLowerCase()}` &&
-          person?.M?.lastName?.S?.toLowerCase() == `${updateRequest.loginInfo.lastName.toLowerCase()}`)
-        ).length > 0;
+        isInFamily = (peopleList != undefined) && peopleList.filter(person => personMatch(updateRequest.loginInfo, person)).length > 0;
 
         if (isInFamily && (family?.M != undefined)) {
           var updateItemParams: UpdateItemInput = {
