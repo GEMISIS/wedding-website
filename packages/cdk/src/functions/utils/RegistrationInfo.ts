@@ -1,6 +1,6 @@
 import { DynamoDB } from "aws-sdk";
 import { Converter, QueryInput, QueryOutput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
-import { FamilyInfo, LoginRequest, PersonInfo, UpdateFamilyInfoRequest } from "website/src/types";
+import { FamilyInfo, LoginRequest, UpdateFamilyInfoRequest } from "website/src/types";
 import { registrationTableName } from "../constants/EnvironmentProps";
 
 const registrationInfoTable = new DynamoDB();
@@ -20,35 +20,22 @@ async function getHouseInfo(addressNumber: string): Promise<QueryOutput> {
 
 export async function getFamilyInfo(loginInfo: LoginRequest): Promise<FamilyInfo | undefined> {
   var queryResults = await getHouseInfo(loginInfo.addressNumber);
+
   if ((queryResults.Count ?? 0) > 0) {
     // Map each house result that is returned (should be just 1, but just to be safe)
     const houseResults = queryResults.Items?.map(houses => {
+      const families = houses?.families.L ?? [];
       // Go through all of the famlies in the house to find which one the person belong's to.
-      const familyResults = houses?.families.L?.map(family => {
-        // Check if the person is in the family.
-        const peopleList = family?.M?.people?.L;
-        const isInFamily = peopleList && peopleList.filter(person => {
-          const personInfo = person?.M;
-          return personInfo?.firstName?.S == `${loginInfo.firstName}` && personInfo?.lastName?.S == `${loginInfo.lastName}`;
-        }).length > 0;
+      const familyIndex = families.findIndex(
+        family => (family?.M?.people?.L?.find(
+          person => (
+            person?.M?.firstName?.S?.toLowerCase() == `${loginInfo.firstName.toLowerCase()}` &&
+            person?.M?.lastName?.S?.toLowerCase() == `${loginInfo.lastName.toLowerCase()}`)
+        )
+      )) ?? -1;
 
-        if (isInFamily) {
-          // If they are in the family, get all of the other family members too.
-          const personResults = peopleList
-            ?.map(person => person?.M ? Converter.unmarshall(person?.M) as PersonInfo : undefined)
-            .filter(x => x);
-
-          return (personResults != undefined && personResults?.length >= 1) ? {
-            people: personResults,
-            email: family?.M?.email?.S,
-            phoneNumber: family?.M?.phoneNumber?.S
-          } as FamilyInfo : undefined;
-        } else {
-          return undefined;
-        }
-      }).filter(x => x);
-
-      return familyResults?.length == 1 ? familyResults[0] : undefined;
+      const family = (familyIndex > -1) ? families[familyIndex].M : undefined;
+      return family ? (Converter.unmarshall(family) as FamilyInfo) : undefined;
     }).filter(x => x);
 
     return houseResults?.length == 1 ? houseResults[0] : undefined;
@@ -72,10 +59,10 @@ export async function updateFamilyInfo(updateRequest: UpdateFamilyInfoRequest): 
         const peopleList = family?.M?.people?.L;
 
         // Check if the person is in the family.
-        isInFamily = (peopleList != undefined) && peopleList.filter(person => {
-          const personInfo = person?.M;
-          return personInfo?.firstName?.S == `${updateRequest.loginInfo.firstName}` && personInfo?.lastName?.S == `${updateRequest.loginInfo.lastName}`;
-        }).length > 0;
+        isInFamily = (peopleList != undefined) && peopleList.filter(person => (
+          person?.M?.firstName?.S?.toLowerCase() == `${updateRequest.loginInfo.firstName.toLowerCase()}` &&
+          person?.M?.lastName?.S?.toLowerCase() == `${updateRequest.loginInfo.lastName.toLowerCase()}`)
+        ).length > 0;
 
         if (isInFamily && (family?.M != undefined)) {
           var updateItemParams: UpdateItemInput = {
