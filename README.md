@@ -46,11 +46,26 @@ A family object will look like so:
 ## Setup
 You will need to install the following before you can use this project:
 - AWS CDK (Cloud Development Kit)
+- Lerna
+
+Once you have these both installed, run `lerna bootstrap` and `lerna run bootstrap` to bootstrap the necessary dependencies and CDK configurations. Finally, update the configuration in `packages/website/src/config.json` with your information.
+
+### Building
+To begin, you need to run `lerna run build` in order to compile all of the necessary code. Lerna will automatically determine the necssary dependencies and the order in which to build everything.
+
+### Deploying
+When you are ready to deploy, begin by synthesizing the CDK templates with `lerna run synth`. Then, simply run `lerna run deploy` to deploy everything!
+
+### Testing Locally
+To test the website locally, run `lerna run start --stream` to open a local version of the website. Note that you will need to have deployed the APIs at least once to test locally.
 
 ## Commands
 
 ### lerna run build
 Builds everything required for the site. Will output a build folder for the website, and a bin folder for the cdk project.
+
+### lerna run config
+Runs the configurator to configure the project with project specific variables.
 
 ### lerna run synth
 Synthesizes the CDK project to be deployed.

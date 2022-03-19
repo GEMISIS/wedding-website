@@ -35,9 +35,13 @@ export function LoginPanel(props: LoginPanelProps) {
     }
   }
   return (
-    <Form onSubmit={validateLogin}>
+    <Form style={{textAlign: 'center'}} onSubmit={validateLogin}>
       <Form.Group className="mb-3" controlId='description'>
-        <Form.Label>Login to Update RSVP</Form.Label>
+        <Form.Label>
+          <h2>
+            Login to Update RSVP
+          </h2>
+        </Form.Label>
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="firstName">

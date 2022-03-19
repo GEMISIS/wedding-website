@@ -1,7 +1,9 @@
 import { APIRequest, APIResult } from "../types";
+const config = require('../config.json');
+const apiUrl: string = config.apiUrl
 
 export function makeAPIRequest(apiRequest: APIRequest, successCallback: (successful: boolean, serverResult: APIResult | undefined) => (void)) {
-  fetch(`https://api.geraldandmegan.com/registration`, {
+  fetch(`https://${apiUrl}/registration`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

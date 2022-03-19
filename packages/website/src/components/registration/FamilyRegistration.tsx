@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Card, CardGroup, Form } from "react-bootstrap";
 import { FamilyInfo, LoginRequest, PersonInfo, UpdateFamilyInfoRequest } from "../../types";
 import { makeAPIRequest } from "../../utils/APIRequests";
 import { NotificationModal } from "../NotificationModal";
@@ -44,28 +44,50 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
     }
   }
   return (
-    <Form onSubmit={validateLogin}>
+    <Form className="family-form" onSubmit={validateLogin}>
       <hr />
-      <Form.Label>Family Contact Info</Form.Label>
+      <Form.Label>
+        <h1>Family Contact Info</h1>
+      </Form.Label>
       <hr />
       <Form.Group className="mb-3" controlId="email">
+        <Form.Label>
+          <h2>Email Address</h2>
+        </Form.Label>
         <Form.Control autoComplete='email' type="text" name='email' placeholder="Email" onChange={onInputChange} value={familyInfo?.email} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="phoneNumber">
+        <Form.Label>
+          <h2>Phone Number</h2>
+        </Form.Label>
         <Form.Control autoComplete='phone-number' type="text" name='phoneNumber' placeholder="Phone Number" onChange={onInputChange} value={familyInfo?.phoneNumber} />
       </Form.Group>
 
-      {
-        familyInfo?.people.map((value, index) => {
-          return (
-            <div key={index.toString()}>
-              <PersonRegistration personInfo={value} onChange={(personInfo) => onPersonChange(personInfo, index)} />
-              <br />
-            </div>
-          );
-        })
-      }
+      <h2>Family Members</h2>
+      <CardGroup className="family-member-card-deck">
+        {
+          familyInfo?.people.map((value, index) => {
+            return (
+              <div key={index.toString()}>
+                <Card>
+                  <Card.Body>
+                    <Card.Title>{value.firstName} {value.lastName}</Card.Title>
+                    <Card.Text>
+                      Attending: {value.attending ? 'Yes' : 'No'}
+                      <br/>
+                      Entree Selection: {value.entree}
+                    </Card.Text>
+                    <Button>Update Registration</Button>
+                  </Card.Body>
+                </Card>
+                {/* <PersonRegistration personInfo={value} onChange={(personInfo) => onPersonChange(personInfo, index)} /> */}
+                <br />
+              </div>
+            );
+          })
+        }
+      </CardGroup>
       <Button variant="primary" type="submit" style={{marginBottom: 50}}>
         Save Registration
       </Button>

@@ -1,5 +1,4 @@
 .App {
-  text-align: center;
 }
 
 .App-logo {
@@ -14,14 +13,67 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: #2c374e;
+  min-height: 15vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  font-family: 'Hurricane', cursive;
+}
+
+.App-content {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (min-width: 767px) {
+  .App-content {
+    margin-left: auto;
+    margin-right: auto;
+    min-height: 100vh;
+    max-width: 60vw;
+  }
+}
+
+
+.App-tabs {
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: none;
+}
+
+.hotel-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 15%;
+  width: 80%;
+  height: auto;
+}
+
+.map-view {
+  min-width: 100%;
+  min-height: 100%;
+  height: 50vh;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.family-member-card-deck {
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.family-form {
+  min-width: 50vw;
 }
 
 .App-link {
