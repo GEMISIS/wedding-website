@@ -1,20 +1,63 @@
 import { Col, Container, Row } from "react-bootstrap"
 const config = require('../../config.json');
-const mapsApiKey: string = config.mapsApiKey
+
+interface PhoneNumber {
+  url: string;
+  number: string;
+}
+
+interface Hotel {
+  name: string;
+  url: string;
+  mapUrl: string;
+  phoneNumber?: PhoneNumber;
+}
+
+interface HotelInfo {
+  hotels: Hotel[];
+  bookStart: string;
+  bookEnd: string;
+  deadline: string;
+  previewImage: string;
+}
 
 interface HotelsProps {
 }
 
 export function Hotels(props: HotelsProps) {
+  const hotelInfo: HotelInfo = config.hotelInfo;
   return (
     <Container>
       <Row>
-        <Col className="col-md-6">
-          <img className="hotel-image" src="https://hotelindigooldtownalexandria.com/wp-content/uploads/2021/05/IndigoAlex18_2213.jpg.webp" />
-          <p>Testing hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello worldTesting hello world</p>
+        <Col md={6}>
+          <img className="hotel-image" alt="" src={hotelInfo.previewImage} />
+          <p>We have a discounted group rate at {hotelInfo.hotels.length} hotels {hotelInfo.bookStart} through {hotelInfo.bookEnd}:
+            <ul>
+              {hotelInfo.hotels.map(hotel => {
+                return (
+                  <li>
+                    Reserve a room in the {hotel.name} by clicking <a href={hotel.url}>here</a>{
+                      hotel.phoneNumber ? (
+                        <span> or by calling <a href={'tel:+' + hotel.phoneNumber.url}>{hotel.phoneNumber.number}</a>.</span>
+                      ) : (<span>.</span>)
+                    }
+                  </li>
+                )
+              })}
+            </ul>
+            Please make your reservation by {hotelInfo.deadline}. These are on a first-come first-serve basis, so once the rooms reserved are filled up or the date to reserve has passed, you will no longer be able to reserve a room.
+          </p>
         </Col>
-        <Col className="col-md-6">
-          <iframe className="map-view" loading="lazy" allowFullScreen src={"https://www.google.com/maps/embed/v1/place?q=place_id:ChIJR_wUDviwt4kRTXJ2-1aFsjo&key=" + mapsApiKey}></iframe>
+        <Col md={6}>
+          <Container>
+            {hotelInfo.hotels.map(hotel => {
+              return (
+                <Row md={6 / hotelInfo.hotels.length}>
+                  <iframe title={hotel.name} className="map-view" style={{ height: `${50 / hotelInfo.hotels.length}vh`}} loading="lazy" allowFullScreen src={hotel.mapUrl}></iframe>
+                </Row>
+              )
+            })}
+          </Container>
         </Col>
       </Row>
     </Container>

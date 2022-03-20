@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FamilyInfo, LoginRequest } from './types';
 import { LoginPanel } from './components/LoginPanel';
 import { FamilyRegistration } from './components/registration/FamilyRegistration';
-import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
+import { Tab, Tabs } from 'react-bootstrap';
 import { HelloMessage } from './components/HelloMessage';
 import { Hotels } from './components/hotel-info/Hotels';
 
@@ -28,16 +28,16 @@ function App() {
       <div className={"App-content align-items-center justify-content-center" + (loggedIn ? "" : " d-flex")}>
         {loggedIn ? (
             <Tabs className="App-tabs mb-2">
-              <Tab style={{textAlign: 'center'}} eventKey="registration" title="Registration">
+              <Tab className='registrationContent' eventKey="registration" title="Registration">
                 <FamilyRegistration loginInfo={loginInfo} startingFamilyInfo={familyInfo} />
               </Tab>
-              <Tab eventKey="hotels" title="Hotels">
+              <Tab className='hotelContent' eventKey="hotels" title="Hotels">
                 <Hotels />
               </Tab>
-              <Tab eventKey="registry" title="Registry">
+              <Tab className='registryContent' eventKey="registry" title="Registry">
                 <HelloMessage myname='test' />
               </Tab>
-              <Tab eventKey="faq" title="FAQ">
+              <Tab className='faqContent' eventKey="faq" title="FAQ">
                 <HelloMessage myname='test' />
               </Tab>
             </Tabs>
