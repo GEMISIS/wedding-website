@@ -29,6 +29,12 @@
   margin-right: auto;
 }
 
+.App-tabs {
+  margin-left: auto;
+  margin-right: auto;
+  border-bottom: none;
+}
+
 .registrationContent {
   margin-left: auto;
   margin-right: auto;
@@ -36,6 +42,53 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+}
+
+.hotel-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 15%;
+  width: 70%;
+  height: auto;
+}
+
+.map-view {
+  border-radius: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.family-member-card-deck {
+  margin-bottom: 2%;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.family-member-card {
+  margin: 2%;
+}
+
+.family-form {
+  min-width: 50vw;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media screen and (min-width: 767px) {
@@ -66,54 +119,5 @@
 
   .dayOfInfoContent {
     margin-top: 5vh;
-  }
-}
-
-
-.App-tabs {
-  margin-left: auto;
-  margin-right: auto;
-  border-bottom: none;
-}
-
-.hotel-image {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 15%;
-  width: 70%;
-  height: auto;
-}
-
-.map-view {
-  border-radius: 5%;
-  margin-left: auto;
-  margin-right: auto;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.family-member-card-deck {
-  margin-left: auto;
-  margin-right: auto;
-  align-items: center;
-  justify-content: center;
-}
-
-.family-form {
-  min-width: 50vw;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
   }
 }

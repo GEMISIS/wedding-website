@@ -18,13 +18,19 @@ export enum VaxStatuses {
   Boosted = 'Vaccinated and Boosted',
 }
 
+export enum AttendingStatus {
+  Unknown = 'Unknown',
+  No = 'No',
+  Yes = 'Yes'
+}
+
 /**
  * The registration info for each person.
  */
 export interface PersonInfo {
   firstName: string;
   lastName: string;
-  attending?: boolean;
+  attending: AttendingStatus;
   isChild?:boolean;
   entree?: EntreeTypes;
   vaxStatus?: VaxStatuses;

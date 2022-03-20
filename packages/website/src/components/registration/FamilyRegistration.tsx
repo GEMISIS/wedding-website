@@ -1,9 +1,10 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Button, Card, CardGroup, Form } from "react-bootstrap";
+import { Button, CardGroup, Form } from "react-bootstrap";
 import { FamilyInfo, LoginRequest, PersonInfo, UpdateFamilyInfoRequest } from "../../types";
 import { makeAPIRequest } from "../../utils/APIRequests";
 import { NotificationModal } from "../NotificationModal";
-import { PersonRegistration } from "./PersonRegistration";
+import { PersonCard } from "./PersonCard";
+import { PersonModal } from "./PersonModal";
 
 interface FamilyRegistrationProps {
   loginInfo: LoginRequest;
@@ -12,6 +13,9 @@ interface FamilyRegistrationProps {
 
 export function FamilyRegistration(props: FamilyRegistrationProps) {
   const [familyInfo, setFamilyInfo] = useState<FamilyInfo>(props.startingFamilyInfo);
+  const [selectedPerson, setSelectedPerson] = useState<PersonInfo>({} as PersonInfo);
+  const [personInfoIndex, setPersonInfoIndex] = useState(0);
+  const [isPersonModalVisible, showPersonModal] = useState(false);
   const [badSubmission, setBadSubmission] = useState(false);
   const [goodSubmission, setGoodSubmission] = useState(false);
 
@@ -69,21 +73,13 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
         {
           familyInfo?.people.map((value, index) => {
             return (
-              <div key={index.toString()}>
-                <Card>
-                  <Card.Body>
-                    <Card.Title>{value.firstName} {value.lastName}</Card.Title>
-                    <Card.Text>
-                      Attending: {value.attending ? 'Yes' : 'No'}
-                      <br/>
-                      Entree Selection: {value.entree}
-                    </Card.Text>
-                    <Button>Update Registration</Button>
-                  </Card.Body>
-                </Card>
-                {/* <PersonRegistration personInfo={value} onChange={(personInfo) => onPersonChange(personInfo, index)} /> */}
-                <br />
-              </div>
+              <PersonCard personInfo={value} personIndex={index} onUpdateButtonClick={
+                () => {
+                  setPersonInfoIndex(index);
+                  setSelectedPerson(value);
+                  showPersonModal(true);
+                }
+              } />
             );
           })
         }
@@ -91,6 +87,10 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
       <Button variant="primary" type="submit" style={{marginBottom: 50}}>
         Save Registration
       </Button>
+
+      {selectedPerson !== undefined ? (
+        <PersonModal personInfo={selectedPerson} onChange={(personInfo) => onPersonChange(personInfo, personInfoIndex)} setVisible={showPersonModal} visible={isPersonModalVisible} />
+      ) : ''}
 
       <NotificationModal title="Successfully Updated Registration" setVisible={setGoodSubmission} visible={goodSubmission}>
         <p>
