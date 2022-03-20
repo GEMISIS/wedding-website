@@ -5,9 +5,9 @@ import { registrationTableName } from "../constants/EnvironmentProps";
 
 const registrationInfoTable = new DynamoDB();
 
-function personMatch(personInfo: PersonInfo, dbEntry: DynamoDB.AttributeValue): boolean {
-  return dbEntry?.M?.firstName?.S?.toLowerCase() == `${personInfo.firstName.toLowerCase()}` &&
-    dbEntry?.M?.lastName?.S?.toLowerCase() == `${personInfo.lastName.toLowerCase()}`;
+function personMatch(loginInfo: LoginRequest, dbEntry: DynamoDB.AttributeValue): boolean {
+  return dbEntry?.M?.firstName?.S?.toLowerCase() == `${loginInfo.firstName.toLowerCase()}` &&
+    dbEntry?.M?.lastName?.S?.toLowerCase() == `${loginInfo.lastName.toLowerCase()}`;
 }
 
 async function getHouseInfo(addressNumber: string): Promise<QueryOutput> {
