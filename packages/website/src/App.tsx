@@ -6,6 +6,8 @@ import { FamilyRegistration } from './components/registration/FamilyRegistration
 import { Tab, Tabs } from 'react-bootstrap';
 import { HelloMessage } from './components/HelloMessage';
 import { Hotels } from './components/hotel-info/Hotels';
+import { DayOfInfo } from './components/day-of-info/DayOfInfo';
+const config = require('./config.json');
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -22,7 +24,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className='jumbotron'>
-          <h1 className='display-1'>Gerald and Megan's Wedding</h1>
+          <h1 className='display-1'>{config.headerText}</h1>
         </div>
       </header>
       <div className={"App-content align-items-center justify-content-center" + (loggedIn ? "" : " d-flex")}>
@@ -37,8 +39,8 @@ function App() {
               <Tab className='registryContent' eventKey="registry" title="Registry">
                 <HelloMessage myname='test' />
               </Tab>
-              <Tab className='faqContent' eventKey="faq" title="FAQ">
-                <HelloMessage myname='test' />
+              <Tab className='dayOfInfoContent' eventKey="dayOfInfo" title="Day of Information">
+                <DayOfInfo />
               </Tab>
             </Tabs>
           ) : <LoginPanel onSuccess={onLoginSuccess} />

@@ -54,14 +54,14 @@ export function FamilyRegistration(props: FamilyRegistrationProps) {
         <Form.Label>
           <h2>Email Address</h2>
         </Form.Label>
-        <Form.Control autoComplete='email' type="text" name='email' placeholder="Email" onChange={onInputChange} value={familyInfo?.email} />
+        <Form.Control autoComplete='email' type="email" name='email' placeholder="Email" onChange={onInputChange} value={familyInfo?.email} />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="phoneNumber">
         <Form.Label>
           <h2>Phone Number</h2>
         </Form.Label>
-        <Form.Control autoComplete='phone-number' type="text" name='phoneNumber' placeholder="Phone Number" onChange={onInputChange} value={familyInfo?.phoneNumber} />
+        <Form.Control autoComplete='tel' type="tel" name='phoneNumber' placeholder="Phone Number" onChange={onInputChange} value={familyInfo?.phoneNumber} />
       </Form.Group>
 
       <h2>Family Members</h2>
