@@ -7,6 +7,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 import { HelloMessage } from './components/HelloMessage';
 import { Hotels } from './components/hotel-info/Hotels';
 import { DayOfInfo } from './components/day-of-info/DayOfInfo';
+import { RegistryInfo } from './components/registry/RegistryInfo';
 const config = require('./config.json');
 
 function App() {
@@ -36,9 +37,9 @@ function App() {
               <Tab className='hotelContent' eventKey="hotels" title="Hotels">
                 <Hotels />
               </Tab>
-              <Tab className='registryContent' eventKey="registry" title="Registry">
-                <HelloMessage myname='test' />
-              </Tab>
+              {/* <Tab className='registryContent' eventKey="registry" title="Registry">
+                <RegistryInfo />
+              </Tab> */}
               <Tab className='dayOfInfoContent' eventKey="dayOfInfo" title="Day of Information">
                 <DayOfInfo />
               </Tab>

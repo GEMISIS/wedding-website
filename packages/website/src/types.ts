@@ -1,11 +1,39 @@
+export interface PhoneNumber {
+  url: string;
+  number: string;
+}
 
-/**
- * The types of entrees available to attendees.
- */
-export enum EntreeTypes {
-  Beef = 'beef',
-  Chicken = 'chicken',
-  Vegetarian = 'vegetarian'
+export interface Hotel {
+  name: string;
+  url: string;
+  mapUrl: string;
+  phoneNumber?: PhoneNumber;
+}
+
+export interface HotelInfo {
+  hotels: Hotel[];
+  bookStart: string;
+  bookEnd: string;
+  deadline: string;
+  previewImage: string;
+}
+
+export interface WeddingEvent {
+  name: string;
+  startTime: string;
+}
+
+export interface VenueInfo {
+  name: string;
+  eventDate: string;
+  startTime: string;
+  endTime: string;
+  mapUrl: string;
+}
+
+export interface EntreeEntry {
+  name: string;
+  description: string;
 }
 
 /**
@@ -32,7 +60,7 @@ export interface PersonInfo {
   lastName: string;
   attending: AttendingStatus;
   isChild?:boolean;
-  entree?: EntreeTypes;
+  entree?: number;
   vaxStatus?: VaxStatuses;
 }
 

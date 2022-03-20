@@ -41,7 +41,15 @@
   text-align: center;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+}
+
+.entreeCarousel {
+  height: 35vh;
+}
+
+.entreeCarouselEntry {
+  padding-left: 15%;
+  padding-right: 15%;
 }
 
 .hotel-image {
@@ -105,8 +113,16 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    margin-top: 5vh;
+  }
+
+  .entreeCarousel {
+    height: 110%;
+  }
+
+  .entreeCarouselEntry {
+    padding-left: 15%;
+    padding-right: 15%;
+    height: 12em;
   }
 
   .hotelContent {

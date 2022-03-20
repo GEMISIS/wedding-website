@@ -1,65 +1,26 @@
 import { Col, Container, Row } from "react-bootstrap"
+import { HotelInfo } from "../../types";
+import { HotelInfoList } from "./HotelInfoList";
+import { HotelMaps } from "./HotelMaps";
 const config = require('../../config.json');
 
-interface PhoneNumber {
-  url: string;
-  number: string;
-}
-
-interface Hotel {
-  name: string;
-  url: string;
-  mapUrl: string;
-  phoneNumber?: PhoneNumber;
-}
-
-interface HotelInfo {
-  hotels: Hotel[];
-  bookStart: string;
-  bookEnd: string;
-  deadline: string;
-  previewImage: string;
-}
-
-interface HotelsProps {
-}
-
-export function Hotels(props: HotelsProps) {
+export function Hotels() {
   const hotelInfo: HotelInfo = config.hotelInfo;
   return (
     <Container>
       <Row>
         <Col md={6}>
           <img className="hotel-image" alt="" src={hotelInfo.previewImage} />
-          <p>We have a discounted group rate at {hotelInfo.hotels.length} hotels {hotelInfo.bookStart} through {hotelInfo.bookEnd}:
+          <p>
+            We have a discounted group rate at {hotelInfo.hotels.length} hotels {hotelInfo.bookStart} through {hotelInfo.bookEnd}:
           </p>
-          <ul>
-            {hotelInfo.hotels.map((hotel, index) => {
-              return (
-                <li id={`${index.toString()}`} key={index}>
-                  Reserve a room in the {hotel.name} by clicking <a href={hotel.url}>here</a>{
-                    hotel.phoneNumber ? (
-                      <span> or by calling <a href={'tel:+' + hotel.phoneNumber.url}>{hotel.phoneNumber.number}</a>.</span>
-                    ) : (<span>.</span>)
-                  }
-                </li>
-              )
-            })}
-          </ul>
+          <HotelInfoList hotels={hotelInfo.hotels} />
           <p>
             Please make your reservation by {hotelInfo.deadline}. These are on a first-come first-serve basis, so once the rooms reserved are filled up or the date to reserve has passed, you will no longer be able to reserve a room.
           </p>
         </Col>
         <Col md={6}>
-          <Container>
-            {hotelInfo.hotels.map((hotel, index) => {
-              return (
-                <Row key={index} md={6 / hotelInfo.hotels.length} style={{marginBottom: '5%'}}>
-                  <iframe title={hotel.name} className="map-view" style={{ width: '100%', height: `${50 / hotelInfo.hotels.length}vh`}} loading="lazy" allowFullScreen src={hotel.mapUrl}></iframe>
-                </Row>
-              )
-            })}
-          </Container>
+          <HotelMaps hotels={hotelInfo.hotels} />
         </Col>
       </Row>
     </Container>
