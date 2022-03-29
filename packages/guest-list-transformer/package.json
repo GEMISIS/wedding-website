@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Transforms excel spreadsheets and CSVs into a JSON file ready for import into DynamoDB for the wedding website to use.",
   "main": "bin/main.js",
+  "files": [
+    "/bin"
+  ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -19,5 +22,8 @@
     "yargs": "^17.4.0"
   },
   "author": "Gerald McAlister",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1102.0"
+  }
 }
