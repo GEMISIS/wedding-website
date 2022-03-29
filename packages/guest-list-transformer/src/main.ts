@@ -4,6 +4,7 @@ import xlsx from 'node-xlsx';
 import { hideBin } from 'yargs/helpers';
 import { Converter } from "aws-sdk/clients/dynamodb";
 import { ArgDefs, AttendingStatus, FamilyInfo, HouseHold } from './types';
+import { putHouseholds } from './utils/db';
 
 const rootDir: string = `${__dirname}/../../..`;
 
@@ -15,6 +16,10 @@ const argDefs: ArgDefs = {
   'groupname': {
     type: 'string',
     default: 'a'
+  },
+  'tablename': {
+    type: 'string',
+    default: undefined
   }
 }
 const argv = yargs(hideBin(process.argv)).options(argDefs).parseSync();
@@ -28,9 +33,9 @@ if (guestSheet) {
   guestSheet.forEach(cell => {
     const cellString: string = String(cell);
     const values: string[] = cellString.split(',');
+    const address: string = values[15].split(' ')[0];
 
-    if (values[0].toLowerCase() !== 'rsvp id' && values[28].toLowerCase() === argv.groupname) {
-      const address: string = values[15].split(' ')[0];
+    if (values[0].toLowerCase() !== 'rsvp id' && address !== "" && values[29].toLowerCase() === argv.groupname) {
       const family: FamilyInfo = {
         email: values[26],
         phoneNumber: values[27],
@@ -84,4 +89,14 @@ if (guestSheet) {
   // Write the results to guests.json
   const dynamodbFriendly = houseHolds.map(household => Converter.marshall(household));
   fs.writeFileSync(`${rootDir}/guests.json`, JSON.stringify({ dynamodbFriendly }), 'utf8');
+
+  // Write to DynamoDB in chunks of 25 items.
+  const chunkSize = 25;
+  for (let i = 0; i < houseHolds.length; i += chunkSize) {
+    const chunk = houseHolds.slice(i, i + chunkSize);
+
+    var queryResults = putHouseholds(argv.tablename, chunk).then(result => {
+      console.log(JSON.stringify(result));
+    });
+  }
 }

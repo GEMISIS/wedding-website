@@ -69,7 +69,7 @@ To test the website locally, run `lerna run start --stream` to open a local vers
 
 ### Converting Excel Sheets
 
-To convert an Excel Spreadsheet, you can use `lerna run convert -- -- --filename=X` where `X` is the name of the spreadsheet file, to create a JSON file output.
+To convert an Excel Spreadsheet, you can use `lerna run convert -- -- --filename=X --tablename=Y` where `X` is the name of the spreadsheet file and `Y` is the name of the DynamoDB table created when deploying, to create a JSON file output.
 
 ## Commands
 
