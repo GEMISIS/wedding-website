@@ -1,61 +1,9 @@
 import fs = require('fs');
 import yargs = require('yargs');
 import xlsx from 'node-xlsx';
-import { Options } from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Converter } from "aws-sdk/clients/dynamodb";
-
-interface ArgDefs {
-  [key: string]: Options;
-}
-
-
-export interface EntreeEntry {
-  name: string;
-  description: string;
-}
-
-/**
- * The possible vaccination statuses for individuals.
- */
-export enum VaxStatuses {
-  Unknown = 'Unknown',
-  Unvaccinated = 'Unvaccinated',
-  Vaccinated = 'Vaccinated',
-  Boosted = 'Vaccinated and Boosted',
-}
-
-export enum AttendingStatus {
-  Unknown = 'Unknown',
-  No = 'No',
-  Yes = 'Yes'
-}
-
-/**
- * The registration info for each person.
- */
-export interface PersonInfo {
-  firstName: string;
-  lastName: string;
-  attending: AttendingStatus;
-  isChild?: boolean;
-  entree?: number;
-  vaxStatus?: VaxStatuses;
-}
-
-/**
- * The registration info for an entire family.
- */
-export interface FamilyInfo {
-  people: PersonInfo[];
-  email: string;
-  phoneNumber: string;
-}
-
-interface HouseHold {
-  addressNumber: string;
-  families: FamilyInfo[];
-}
+import { ArgDefs, AttendingStatus, FamilyInfo, HouseHold } from './types';
 
 const rootDir: string = `${__dirname}/../../..`;
 
