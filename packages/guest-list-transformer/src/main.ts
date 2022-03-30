@@ -3,11 +3,19 @@ import yargs = require('yargs');
 import xlsx from 'node-xlsx';
 import { hideBin } from 'yargs/helpers';
 import { Converter } from "aws-sdk/clients/dynamodb";
-import { ArgDefs, AttendingStatus, FamilyInfo, HouseHold } from './types';
+import { ArgDefs, FamilyInfo, HouseHold } from './types';
 import { putHouseholds } from './utils/db';
 
-function isStringArray(x: any): x is string[] {
-  return typeof x === 'object';
+function isUnknownArray(val: any): val is unknown[] {
+  return Array.isArray(val);
+}
+
+function asString(val: unknown, defVal: string) {
+  return typeof val === "string" ? val : defVal;
+}
+
+function asNumber(val: unknown, defVal: number) {
+  return typeof val === "number" ? val : defVal;
 }
 
 const rootDir: string = `${__dirname}/../../..`;
@@ -36,48 +44,47 @@ if (guestSheet) {
   var houseHolds: HouseHold[] = [];
   guestSheet.forEach(cell => {
     // Need to determine the type here or things will break since the default type is unknown.
-    if (isStringArray(cell)) {
-      const values: string[] = cell as string[];
-      var address: string = values[15].split(' ')[0];
+    if (isUnknownArray(cell)) {
+      var address: string = asString(cell[15], '').split(' ')[0];
       if (address.toLowerCase().startsWith("po")) {
-        address = values[15].split(' ').pop() ?? ' '; // Should always be defined since the list should not be empty.
+        address = asString(cell[15], '').split(' ').pop() ?? ' '; // Should always be defined since the list should not be empty.
       }
 
-      if (values[0].toLowerCase() !== 'rsvp id' && address !== "" && values[28].toLowerCase() === argv.groupname) {
+      if (asString(cell[0], '').toLowerCase() !== 'rsvp id' && address !== "" && asString(cell[28], '').toLowerCase() === argv.groupname) {
         const family: FamilyInfo = {
-          email: values[25],
-          phoneNumber: values[26],
+          email: asString(cell[25], ''),
+          phoneNumber: asString(cell[26], ''),
           people: [
           ]
         };
 
         // Add Guest 1
-        if (values[5]) {
-          const surname = ((values[6] ?? '') != '') ? values[6] : values[3];
+        const firstGuest = asString(cell[5], '');
+        if (firstGuest) {
+          const surname = asString(cell[6], '');
           family.people.push({
-            firstName: values[5],
-            lastName: surname,
-            attending: AttendingStatus.Unknown
+            firstName: firstGuest,
+            lastName: surname != '' ? surname : asString(cell[3], '')
           });
         }
 
         // Add Guest 2
-        if (values[9]) {
-          const surname = ((values[10] ?? '') != '') ? values[10] : values[3];
+        const secondGuest = asString(cell[9], '');
+        if (secondGuest) {
+          const surname = asString(cell[10], '');
           family.people.push({
-            firstName: values[9],
-            lastName: surname,
-            attending: AttendingStatus.Unknown
+            firstName: secondGuest,
+            lastName: surname != '' ? surname : asString(cell[3], '')
           });
         }
 
         // Add Others
-        if (values[12]) {
-          values[12].split(', ').join(',').split(' and ').join(',').split(',').forEach(name => {
+        const others = asString(cell[12], '');
+        if (others) {
+          others.split(', ').join(',').split(' and ').join(',').split(',').forEach(name => {
             family.people.push({
               firstName: name,
-              lastName: values[3],
-              attending: AttendingStatus.Unknown
+              lastName: asString(cell[3], '')
             });
           });
         }
@@ -89,7 +96,7 @@ if (guestSheet) {
           houseHolds.push({
             addressNumber: address,
             families: [family]
-          })
+          });
         }
       }
     }
@@ -104,7 +111,7 @@ if (guestSheet) {
   for (let i = 0; i < houseHolds.length; i += chunkSize) {
     const chunk = houseHolds.slice(i, i + chunkSize);
 
-    var queryResults = putHouseholds(argv.tablename, chunk).then(result => {
+    putHouseholds(argv.tablename, chunk).then(result => {
       console.log(JSON.stringify(result));
     });
   }
