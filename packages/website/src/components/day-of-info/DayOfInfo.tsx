@@ -13,6 +13,9 @@ export function DayOfInfo() {
         We will be holding the wedding on <b>{venueInfo.eventDate}</b> at <b>{venueInfo.name}</b>, beginning at <b>{venueInfo.startTime}</b> and ending at <b>{venueInfo.endTime}</b>. The schedule of events will be as follows:
       </p>
       <EventList events={weddingEvents} />
+      <p style={{textAlign: 'center', marginTop: '2.5%', marginLeft: 'auto', marginRight: 'auto'}}>
+        <b>Please note that {config.blackTie ? 'this is a black tie event.' : 'the dress code is formal attire.'}</b>
+      </p>
     </Container>
   )
 }
