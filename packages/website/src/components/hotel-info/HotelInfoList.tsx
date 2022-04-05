@@ -10,7 +10,7 @@ export function HotelInfoList(props: HotelInfoListProps) {
       {props.hotels.map((hotel, index) => {
         return (
           <li id={`${index.toString()}`} key={index}>
-            Reserve a room in the {hotel.name} by clicking <a href={hotel.url}>here</a>{
+            Reserve a room in the {hotel.name} by clicking <a href={hotel.url} target={"_blank"}>here</a>{
               hotel.phoneNumber ? (
                 <span> or by calling <a href={'tel:+' + hotel.phoneNumber.url}>{hotel.phoneNumber.number}</a>.</span>
               ) : (<span>.</span>)

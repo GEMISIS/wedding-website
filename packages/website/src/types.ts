@@ -18,6 +18,20 @@ export interface HotelInfo {
   previewImage: string;
 }
 
+export interface MethodOfTransport {
+  brandName: string;
+  validLocations: string[];
+  validStarting: string;
+  validEnding: string;
+  couponCode: string;
+  isFree: boolean;
+}
+
+export interface TransportationInfo {
+  methodsOfTransport: MethodOfTransport[];
+  previewImage: string;
+}
+
 export interface WeddingEvent {
   name: string;
   startTime: string;

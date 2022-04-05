@@ -8,6 +8,7 @@ import { HelloMessage } from './components/HelloMessage';
 import { Hotels } from './components/hotel-info/Hotels';
 import { DayOfInfo } from './components/day-of-info/DayOfInfo';
 import { RegistryInfo } from './components/registry/RegistryInfo';
+import { Transportation } from './components/transportation/Transportation';
 const config = require('./config.json');
 
 function App() {
@@ -36,6 +37,9 @@ function App() {
               </Tab>
               <Tab className='hotelContent' eventKey="hotels" title="Hotels">
                 <Hotels />
+              </Tab>
+              <Tab className='transportationContent' eventKey="transportation" title="Transportation">
+                <Transportation />
               </Tab>
               {/* <Tab className='registryContent' eventKey="registry" title="Registry">
                 <RegistryInfo />
