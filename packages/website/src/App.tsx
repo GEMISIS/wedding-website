@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FamilyInfo, LoginRequest } from './types';
 import { LoginPanel } from './components/LoginPanel';
 import { FamilyRegistration } from './components/registration/FamilyRegistration';
-import { Tab, Tabs } from 'react-bootstrap';
+import { Button, Tab, Tabs } from 'react-bootstrap';
 import { HelloMessage } from './components/HelloMessage';
 import { Hotels } from './components/hotel-info/Hotels';
 import { DayOfInfo } from './components/day-of-info/DayOfInfo';
@@ -31,23 +31,30 @@ function App() {
       </header>
       <div className={"App-content align-items-center justify-content-center" + (loggedIn ? "" : " d-flex")}>
         {loggedIn ? (
-            <Tabs className="App-tabs mb-2">
-              <Tab className='registrationContent' eventKey="registration" title="Registration">
-                <FamilyRegistration loginInfo={loginInfo} startingFamilyInfo={familyInfo} />
-              </Tab>
-              <Tab className='hotelContent' eventKey="hotels" title="Hotels">
-                <Hotels />
-              </Tab>
-              <Tab className='transportationContent' eventKey="transportation" title="Transportation">
-                <Transportation />
-              </Tab>
-              {/* <Tab className='registryContent' eventKey="registry" title="Registry">
-                <RegistryInfo />
-              </Tab> */}
-              <Tab className='dayOfInfoContent' eventKey="dayOfInfo" title="Day of Information">
-                <DayOfInfo />
-              </Tab>
-            </Tabs>
+            <div>
+              <Tabs className="App-tabs mb-2">
+                <Tab className='registrationContent' eventKey="registration" title="Registration">
+                  <FamilyRegistration loginInfo={loginInfo} startingFamilyInfo={familyInfo} />
+                </Tab>
+                <Tab className='hotelContent' eventKey="hotels" title="Hotels">
+                  <Hotels />
+                </Tab>
+                <Tab className='transportationContent' eventKey="transportation" title="Transportation">
+                  <Transportation />
+                </Tab>
+                {/* <Tab className='registryContent' eventKey="registry" title="Registry">
+                  <RegistryInfo />
+                </Tab> */}
+                <Tab className='dayOfInfoContent' eventKey="dayOfInfo" title="Day of Information">
+                  <DayOfInfo />
+                </Tab>
+              </Tabs>
+            <footer className='text-center footer' style={{ marginBottom: '1%'}}>
+                <Button target='_blank' href={config.registry}>
+                  Click Here for our Registry
+                </Button>
+              </footer>
+            </div>
           ) : <LoginPanel onSuccess={onLoginSuccess} />
         }
       </div>
